@@ -1,34 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [running,setRunning] = useState(false);
+  const [elapsedtime,setElapsedtime] = useState(0);
+
+  useEffect(() => {
+    let interval;
+
+    if (running){
+    interval = setInterval (() => {
+setElapsedtime((prev)=> prev + 10 )
+
+    },10
+  )
+    }
+    else{
+      clearInterval(interval)
+    }
+  
+    return () => {
+      clearInterval(interval)
+    }
+  }, [running])
+
+  const startStopWatch = () => {
+    setRunning(true)
+  }
+  const stopStopWatch = () => {
+    setRunning(false)
+  }
+  const resetStopWatch = () => {
+    setRunning(false)
+    setElapsedtime(0)
+  }
+
+
+  const formatTime = (time)=>{
+    const minutes = Math.floor(time/ 60000);
+      const seconds = Math.floor((time % 60000) / 1000);
+      const milliseconds = Math.floor((time % 1000) / 10);
+
+      return `${minutes}:${seconds < 10 ? '0': ''}${seconds}.${milliseconds< 10 ? '0': ''}${milliseconds}`
+}
+
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+ <div className=" flex items-center justify-center my-52">
+      <div className=" container">
+      <h1 className=" text-center font-bold text-xl mb-6">Stop-Watch</h1>
+      <h1 className=" text-center font-bold text-xl mt-4 mb-6">{formatTime(elapsedtime)}</h1>
+        <div className=" flex justify-center space-x-10 text-lg font-bold">
+            <button onClick={startStopWatch}  disabled={running} className="">start</button>
+            <button onClick={stopStopWatch} disabled={!running} className="">stop</button>
+            <button onClick={resetStopWatch} className="">reset</button>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
